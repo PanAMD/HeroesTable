@@ -25,8 +25,9 @@ export class HeroesComponent implements OnInit {
   setPoints(points: number): void {
   }
 
-  add(name: string): void {
+  add(name: string, strength: string): void {
     name = name.trim();
+    let strengthd = parseInt(strength);
     if (!name) { return; }
     this.heroService.addHero({ name } as Hero)
       .subscribe(hero => {

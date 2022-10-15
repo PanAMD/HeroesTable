@@ -2,7 +2,7 @@ import { browser, element, by, ElementFinder, ElementArrayFinder } from 'protrac
 
 const expectedH1 = 'Tour of Heroes';
 const expectedTitle = `${expectedH1}`;
-const targetHero = { id: 15, name: 'Magneta' };
+const targetHero = { id: 15, name: 'Magneta',strength: 100 };
 const targetHeroDashboardIndex = 2;
 const nameSuffix = 'X';
 const newHeroName = targetHero.name + nameSuffix;
@@ -14,6 +14,7 @@ class Hero {
 
   // Hero from string formatted as '<id> <name>'.
   static fromString(s: string): Hero {
+    console.log(s);
     return new Hero(
       +s.substring(0, s.indexOf(' ')),
       s.slice(s.indexOf(' ') + 1),
