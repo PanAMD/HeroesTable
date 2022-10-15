@@ -22,6 +22,9 @@ export class HeroesComponent implements OnInit {
     .subscribe(heroes => this.heroes = heroes);
   }
 
+  setPoints(points: number): void {
+  }
+
   add(name: string): void {
     name = name.trim();
     if (!name) { return; }

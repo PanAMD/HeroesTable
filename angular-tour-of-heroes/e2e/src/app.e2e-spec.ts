@@ -8,7 +8,7 @@ const nameSuffix = 'X';
 const newHeroName = targetHero.name + nameSuffix;
 
 class Hero {
-  constructor(public id: number, public name: string) {}
+  constructor(public id: number, public name: string, public strength: number) {}
 
   // Factory methods
 
@@ -17,6 +17,7 @@ class Hero {
     return new Hero(
       +s.substring(0, s.indexOf(' ')),
       s.slice(s.indexOf(' ') + 1),
+      +s.substring(0, s.indexOf(' ')),
     );
   }
 
@@ -24,7 +25,7 @@ class Hero {
   static async fromLi(li: ElementFinder): Promise<Hero> {
     const stringsFromA = await li.all(by.css('a')).getText();
     const strings = stringsFromA[0].split(' ');
-    return { id: +strings[0], name: strings[1] };
+    return { id: +strings[0], name: strings[1], strength: +strings[2] };
   }
 
   // Hero id and name from the given detail element.
@@ -33,9 +34,12 @@ class Hero {
     const id = await detail.all(by.css('div')).first().getText();
     // Get name from the h2
     const name = await detail.element(by.css('h2')).getText();
+    const strength = await detail.element(by.css('h3')).getText();
+
     return {
       id: +id.slice(id.indexOf(' ') + 1),
-      name: name.substring(0, name.lastIndexOf(' '))
+      name: name.substring(0, name.lastIndexOf(' ')),
+      strength: +strength.slice(strength.indexOf(' ') + 1)
     };
   }
 }
@@ -184,7 +188,7 @@ describe('Tutorial part 6', () => {
       expect(heroesAfter.slice(0, numHeroes)).toEqual(heroesBefore, 'Old heroes are still there');
 
       const maxId = heroesBefore[heroesBefore.length - 1].id;
-      expect(heroesAfter[numHeroes]).toEqual({id: maxId + 1, name: addedHeroName});
+      expect(heroesAfter[numHeroes]).toEqual({id: maxId + 1, name: addedHeroName, strength: 10});
     });
 
     it('displays correctly styled buttons', async () => {
@@ -266,7 +270,6 @@ describe('Tutorial part 6', () => {
   async function updateHeroNameInDetailView() {
     // Assumes that the current view is the hero details view.
     await addToHeroName(nameSuffix);
-
     const page = getPageElts();
     const hero = await Hero.fromDetail(page.heroDetail);
     expect(hero.id).toEqual(targetHero.id);
@@ -276,6 +279,11 @@ describe('Tutorial part 6', () => {
 });
 
 async function addToHeroName(text: string): Promise<void> {
+  const input = element(by.css('input'));
+  await input.sendKeys(text);
+}
+
+async function addToHeroPoints(text: number): Promise<void> {
   const input = element(by.css('input'));
   await input.sendKeys(text);
 }
